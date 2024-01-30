@@ -1,7 +1,7 @@
 ![STOIC (11)](https://github.com/TheStoicBear/Stoic-PoliceMenu/assets/112611821/a68979cb-fef6-4ddb-a7d9-65aad4044eef)
 
 
-<h1 align="center"><a href="https://stoic.tebex.io/">Stoic-PoliceMenu</a></h1>
+<h1 align="center"><a href="https://stoic.tebex.io/package/6107118">Stoic-PoliceMenu</a></h1>
 A Simple Police Menu for NDFramework w/ ox search w/ ox_target
 # Stoic-PoliceMenu
 
@@ -38,4 +38,4 @@ Stoic-PoliceMenu is a police resource for FiveM servers, currently still in deve
 *Note: Still in development.*
 
 
-<h1 align="center"><a href="https://stoic.tebex.io/">Download [FREE]</a></h1>
+<h1 align="center"><a href="https://stoic.tebex.io/package/6107118">Download [FREE]</a></h1>
