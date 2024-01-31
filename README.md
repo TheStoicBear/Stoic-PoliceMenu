@@ -4,7 +4,7 @@
 <h1 align="center"><a href="https://stoic.tebex.io/package/6107118">Stoic-PoliceMenu 
 Click this to download</a></h1>
 A Simple Police Menu for NDFramework w/ ox search w/ ox_target
-# Stoic-PoliceMenu
+-----
 
 Stoic-PoliceMenu is a police resource for FiveM servers, currently still in development. It aims to provide law enforcement personnel with a range of essential tools and actions to facilitate their duties effectively.
 
