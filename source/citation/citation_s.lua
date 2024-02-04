@@ -1,50 +1,45 @@
 -- Function to send notifications or chat messages
 function SendCitationHandler(playerId, title, message, cost)
-    local data = {
-        id = playerId,  -- Use playerId as a unique identifier
-        title = title,
-        description = message,
-        duration = 5000,  -- Default duration is 5000 milliseconds (5 seconds)
-        position = 'bottom', --Middle center-bottom
-        type = 'inform',
-        style = {},  -- You can customize the style if needed
-        icon = 'fas fa-info-circle',  -- Use Font Awesome 6 icon name for inform type
-        iconColor = '#ffffff',  -- Customize icon color if needed
-        iconAnimation = 'fade',  -- Choose an icon animation if needed
-        alignIcon = 'center'  -- Default is center
-    }
-
-    TriggerClientEvent('ox_lib:notify', playerId, data)
+    QBCore.Functions.Notify(message, 'inform', 5000)
 end
 
 -- Function to deduct fines and send a message to the target player
 function DeductFine(targetPlayerId, amount, reason)
-    local player = NDCore.getPlayer(targetPlayerId)
-
-    -- Check if the player object is valid before proceeding
-    if player then
-        player.deductMoney("bank", amount, "Player Citations")
-        local message = ' You have been fined: $' .. amount .. ' for: ' .. reason
-        SendCitationHandler(targetPlayerId, "Fine:", message, amount)
-    else
-        print("Invalid player object for targetPlayerId:", targetPlayerId)
-    end
+    QBCore.Functions.GetPlayer(targetPlayerId, function(player)
+        if player then
+            player.Functions.RemoveMoney('bank', amount, 'Player Citations')
+            local message = 'You have been fined: $' .. amount .. ' for: ' .. reason
+            SendCitationHandler(targetPlayerId, "Fine:", message, amount)
+        else
+            print("Invalid player object for targetPlayerId:", targetPlayerId)
+        end
+    end)
 end
 
 -- Function to issue a ticket and send a message to the target player
 function IssueTicket(targetPlayerId, amount, reason)
-    local player = NDCore.getPlayer(targetPlayerId)
-    player.deductMoney("bank", amount, "Player Citations")
-    local message = ' You have been issued a ticket: $' .. amount .. ' for: ' .. reason
-    SendCitationHandler(targetPlayerId, "Ticket:", message, amount)
+    QBCore.Functions.GetPlayer(targetPlayerId, function(player)
+        if player then
+            player.Functions.RemoveMoney('bank', amount, 'Player Citations')
+            local message = 'You have been issued a ticket: $' .. amount .. ' for: ' .. reason
+            SendCitationHandler(targetPlayerId, "Ticket:", message, amount)
+        else
+            print("Invalid player object for targetPlayerId:", targetPlayerId)
+        end
+    end)
 end
 
 -- Function to issue a parking citation and send a message to the target player
 function IssueParkingCitation(targetPlayerId, amount, reason)
-    local player = NDCore.getPlayer(targetPlayerId)
-    player.deductMoney("bank", amount, "Player Citations")
-    local message = ' You have been issued a parking citation: $' .. amount .. ' for: ' .. reason
-    SendCitationHandler(targetPlayerId, "Parking Citation:", message, amount)
+    QBCore.Functions.GetPlayer(targetPlayerId, function(player)
+        if player then
+            player.Functions.RemoveMoney('bank', amount, 'Player Citations')
+            local message = 'You have been issued a parking citation: $' .. amount .. ' for: ' .. reason
+            SendCitationHandler(targetPlayerId, "Parking Citation:", message, amount)
+        else
+            print("Invalid player object for targetPlayerId:", targetPlayerId)
+        end
+    end)
 end
 
 -- Function to impound a vehicle and send a message to the target player
