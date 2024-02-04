@@ -10,18 +10,10 @@ local config = {
     jail_player = true
 }
 
-
 -- Function to check if the player is in a police job
-function IsPoliceJob(player)
-    local player = NDCore.getPlayer(src) -- Replace with your actual function to get player data
-    if player and player.job then
-        for _, jobIdentifier in ipairs(Config.jobIdentifiers) do
-            if player.job == jobIdentifier then
-                return true
-            end
-        end
-    end
-    return false
+function IsPoliceJob()
+    local player = QBCore.Functions.GetPlayerData()
+    return player.job.name == "police" or player.job.name == "ambulance"
 end
 
 -- Register Police Menu command
