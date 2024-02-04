@@ -224,24 +224,26 @@ function GetNearestPlayer()
     return nearestPlayer
 end
 
--- Define options for opening the action menu
-local actionMenuOptions = {
-    {
-        name = "openActionMenu",
-        icon = "fa-solid fa-hand-holding-heart",
-        label = "Open Action Menu",
-        distance = 2.0,
-        canInteract = function(entity, distance, coords, name)
-            -- You can define custom conditions here if needed
-            return true
-        end,
-        onSelect = function(data)
-            local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(data.entity))
-            TriggerEvent("openActionMenu", target)
-            lib.showContext('policeactions')
-        end
-    }
-}
+exports['qb-target']:AddGlobalPlayer({
+    options = {
+        {
+            type = "client",
+            event = "openActionMenu",
+            icon = "fa-solid fa-hand-holding-heart",
+            label = "Open Action Menu",
+            distance = 2.0,
+            canInteract = function(entity, distance, coords, name)
+                -- You can define custom conditions here if needed
+                return true
+            end,
+            job = 'police', -- Example job condition
+            onSelect = function(entity)
+                local playerId = GetPlayerServerId(NetworkGetPlayerIndexFromPed(entity))
+                TriggerEvent("openActionMenu", playerId)
+                lib.showContext('policeactions')
+            end
+        }
+    },
+    distance = 2.5 -- This is the distance for you to be at for the target to turn blue
+})
 
--- Add global player interactions to open the action menu
-ox_target:addGlobalPlayer(actionMenuOptions)
