@@ -1,15 +1,11 @@
 -- Search Player Function
 RegisterNetEvent('search_player')
 AddEventHandler('search_player', function()
-    local nearestPlayer = GetNearestPlayer()
+    local closestPlayer, closestDistance = QBCore.Functions.GetClosestPlayer()
 
-    if nearestPlayer ~= -1 then
-        exports.ox_inventory:openNearbyInventory(nearestPlayer)
+    if closestPlayer ~= -1 and closestDistance <= 3.0 then
+        TriggerServerEvent('qb-inventory:server:openInventory', GetPlayerServerId(closestPlayer), 'otherplayer', closestPlayer)
     else
-        lib.notify({
-            title = 'No Players Nearby',
-            description = 'No players are nearby to search.',
-            type = 'info'
-        })
+        QBCore.Functions.Notify('No players nearby to search.', 'error')
     end
 end)
