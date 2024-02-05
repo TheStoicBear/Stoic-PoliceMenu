@@ -42,5 +42,3 @@ Stoic-PoliceMenu is a police resource for FiveM servers, currently still in deve
 
 *Note: Still in development.*
 
-
-<h1 align="center"><a href="https://stoic.tebex.io/package/6107118">Click this to download [FREE]</a></h1>
