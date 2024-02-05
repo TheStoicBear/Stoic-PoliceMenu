@@ -1,3 +1,7 @@
+# For Andy from NDFrammework
+# I did not make, I do not claim rights and it's Open Source.
+
+
 ![STOIC (11)](https://github.com/TheStoicBear/Stoic-PoliceMenu/assets/112611821/a68979cb-fef6-4ddb-a7d9-65aad4044eef)
 
 
