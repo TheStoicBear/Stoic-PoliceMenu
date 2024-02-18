@@ -250,5 +250,23 @@ local actionMenuOptions = {
     }
 }
 
--- Add global player interactions to open the action menu
-ox_target:addGlobalPlayer(actionMenuOptions)
+
+-- Thread to continuously check the player's job status and access to ox_target
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(5000) -- Adjust the interval as per your preference
+
+        -- Iterate through all players to check job status
+        for _, player in ipairs(Players) do
+            if IsPoliceJob(player) then
+                -- Add global player interactions to open the action menu
+                ox_target:addGlobalPlayer(function(player)
+                    actionMenuOptions(player)
+                end)
+            else
+                -- Remove access to ox_target for players not in the police job
+                ox_target:removeGlobalPlayer(player.source)
+            end
+        end
+    end
+end)
