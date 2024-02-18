@@ -129,16 +129,40 @@ function ImpoundClosestVehicle(vehicle)
     local impoundLocation = impoundLocations[randomLocationIndex]
     local impoundX, impoundY, impoundZ, impoundHeading = impoundLocation.X, impoundLocation.Y, impoundLocation.Z, impoundLocation.H
 
-    local offset = 5.0
+    -- Check for collision with other vehicles
+    local spawnFound = false
+    local spawnX, spawnY, spawnZ = 0, 0, 0
+    local offset = 2.0
     local angle = math.rad(impoundHeading)
 
-    local spawnX = impoundX + (offset * math.cos(angle))
-    local spawnY = impoundY + (offset * math.sin(angle))
-    local spawnZ = impoundZ
-    
-    SetEntityCoords(vehicle, spawnX, spawnY, spawnZ, true, true, true)
+    while not spawnFound do
+        spawnX = impoundX + (offset * math.cos(angle))
+        spawnY = impoundY + (offset * math.sin(angle))
+
+        local isClear = true
+        local nearbyVehicles = GetGamePool("CVehicle")
+
+        for _, nearbyVehicle in ipairs(nearbyVehicles) do
+            local vehiclePosition = GetEntityCoords(nearbyVehicle)
+            local distance = #(vector3(spawnX, spawnY, impoundZ) - vehiclePosition)
+
+            if distance < 5.0 then
+                isClear = false
+                break
+            end
+        end
+
+        if isClear then
+            spawnFound = true
+        else
+            offset = offset + 2.0 -- Increase offset if collision detected
+        end
+    end
+
+    -- Impound the vehicle at the found spawn point
+    SetEntityCoords(vehicle, spawnX, spawnY, impoundZ, true, true, true)
     SetEntityHeading(vehicle, impoundHeading)
-    
+
     local title = "[Police] Impound"
     local message = "SUCCESS: The vehicle has been impounded."
     NotifyImpoundResult(title, message)
