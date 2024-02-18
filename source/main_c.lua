@@ -10,6 +10,7 @@ local config = {
     jail_player = true
 }
 
+RegisterKeyMapping('policeMenu', 'Open Police Menu', 'keyboard', 'F7')
 
 -- Function to check if the player is in a police job
 function IsPoliceJob(player)
@@ -50,8 +51,6 @@ RegisterCommand('policeMenu', function()
         print("You do not have permission to access the police menu.")
     end
 end, false)
-
-
 
 CreateThread(function()
     while true do
