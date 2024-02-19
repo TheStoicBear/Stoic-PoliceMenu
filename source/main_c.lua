@@ -235,13 +235,10 @@ end
 local actionMenuOptions = {
     {
         name = "openActionMenu",
-        icon = "fa-solid fa-hand-holding-heart",
-        label = "Open Action Menu",
-        distance = 2.0,
-        canInteract = function(entity, distance, coords, name)
-            -- You can define custom conditions here if needed
-            return true
-        end,
+        icon = Config.ThirdEyeIcon,
+        label = Config.ThirdEyeMenuName,
+        iconColor = Config.ThirdEyeIconColor,
+        distance = Config.ThirdEyeDistance,
         onSelect = function(data)
             local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(data.entity))
             TriggerEvent("openActionMenu", target)
@@ -250,23 +247,7 @@ local actionMenuOptions = {
     }
 }
 
-
--- Thread to continuously check the player's job status and access to ox_target
-Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(5000) -- Adjust the interval as per your preference
-
-        -- Iterate through all players to check job status
-        for _, player in ipairs(Players) do
-            if IsPoliceJob(player) then
-                -- Add global player interactions to open the action menu
-                ox_target:addGlobalPlayer(function(player)
-                    actionMenuOptions(player)
-                end)
-            else
-                -- Remove access to ox_target for players not in the police job
-                ox_target:removeGlobalPlayer(player.source)
-            end
-        end
-    end
-end)
+-- Check if the player is in the police job
+if IsPoliceJob(source) then
+    ox_target:addGlobalPlayer(actionMenuOptions)
+end
