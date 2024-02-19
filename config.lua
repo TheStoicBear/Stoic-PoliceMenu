@@ -108,6 +108,20 @@ Config.EMSItems = {
     -- Add more items for EMS here
 }
     
+Settings = {
+    Impound = {
+        Toggle = true,
+        Command = "impound",
+        MaxValue = 0, -- Set to 0 for no fines
+        ImpoundLocations = {
+            {X = 404.24, Y = -1631.18, Z = 29.29, H = 310.91}, -- First impound location
+            {X = 397.54, Y = -1642.8, Z = 29.29, H = 324.64}, -- First impound location
+            {X = 400.09, Y = -1644.92, Z = 29.29, H = 316.55}, -- First impound location
+            {X = 402.27, Y = -1646.92, Z = 29.29, H = 326.7} -- First impound location
+            -- Add more impound locations here
+        }
+    }
+}
 
 --Shows notification
 function ShowNotification( text )
