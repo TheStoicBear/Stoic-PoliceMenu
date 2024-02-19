@@ -10,6 +10,10 @@ config = {
 
 Config = {}
 Config.UseThirdEye = true -- WIP To use Third Eye instead of Radial Menu
+Config.ThirdEyeIcon = "fa-solid fa-handcuffs" -- Third Eye Font Awesome ICON
+Config.ThirdEyeIconColor = "#0702fa" -- Third Eye Color for the Icon
+Config.ThirdEyeMenuName = "Police Action Menu" -- Name of the ThirdEye Label.
+Config.ThirdEyeDistance = 2.0
 Config.UseRadialMenu = true -- WIP To use Radial Menu instead of Third Eye
 Config.NotifySubject = true -- Set this to false if you want the person being tested to get a chat notification that they are being tested
 Config.EnableCleanGSR = true -- Set this to false if you dont want people to be able to clean gsr off them
