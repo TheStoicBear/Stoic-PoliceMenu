@@ -22,9 +22,9 @@ Config.GSRTestDistance = 3 -- Maximum Distance That You Can Be To Test For GSR *
 Config.TestGSR = "gsr" -- Command To Test For GSR
 Config.CleanGSR = "cleangsr" -- Command To Clean GSR
 Config.jobIdentifiers = {
-        "sasp", -- Example police job identifier 1
-        "lscso", -- Example police job identifier 2
-        "doa" -- Example police job identifier 3
+        "lspd", -- Example police job identifier 1
+        "bcso", -- Example police job identifier 2
+        "sahp" -- Example police job identifier 3
 }
 
 Config.Actions = {
@@ -88,14 +88,14 @@ Config.shotspotter = {
 
 -- Police job names
 Config.PoliceJobs = {
-    "LSPD",
-    "BCSO",
+    "lspd",
+    "bcso",
     -- Add more police job names here
 }
 
 -- EMS job names
 Config.EMSJobs = {
-    "SAFD",
+    "safd",
     -- Add more EMS job names here
 }
 
