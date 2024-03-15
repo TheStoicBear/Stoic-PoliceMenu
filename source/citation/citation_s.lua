@@ -19,7 +19,7 @@ end
 
 -- Function to deduct fines and send a message to the target player
 function DeductFine(targetPlayerId, amount, reason)
-    local player = NDCore.getPlayer(targetPlayerId)
+    local player =  NDCore.Functions.GetPlayer(targetPlayerId)
 
     -- Check if the player object is valid before proceeding
     if player then
@@ -33,7 +33,7 @@ end
 
 -- Function to issue a ticket and send a message to the target player
 function IssueTicket(targetPlayerId, amount, reason)
-    local player = NDCore.getPlayer(targetPlayerId)
+    local player =  NDCore.Functions.GetPlayer(targetPlayerId)
     player.deductMoney("bank", amount, "Player Citations")
     local message = ' You have been issued a ticket: $' .. amount .. ' for: ' .. reason
     SendCitationHandler(targetPlayerId, "Ticket:", message, amount)
@@ -41,7 +41,7 @@ end
 
 -- Function to issue a parking citation and send a message to the target player
 function IssueParkingCitation(targetPlayerId, amount, reason)
-    local player = NDCore.getPlayer(targetPlayerId)
+    local player =  NDCore.Functions.GetPlayer(targetPlayerId)
     player.deductMoney("bank", amount, "Player Citations")
     local message = ' You have been issued a parking citation: $' .. amount .. ' for: ' .. reason
     SendCitationHandler(targetPlayerId, "Parking Citation:", message, amount)

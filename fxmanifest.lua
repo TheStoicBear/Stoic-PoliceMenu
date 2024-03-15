@@ -26,6 +26,7 @@ server_scripts {
 } 
 
 shared_scripts {
+    "@ND_Core/shared/import.lua"
     "@ox_lib/init.lua",
     "config.lua"
 } 

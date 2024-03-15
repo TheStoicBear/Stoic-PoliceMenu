@@ -14,7 +14,8 @@ RegisterKeyMapping('policeMenu', 'Open Police Menu', 'keyboard', 'F7')
 
 -- Function to check if the player is in a police job
 function IsPoliceJob(player)
-    local player = NDCore.getPlayer(src) -- Replace with your actual function to get player data
+    local src = source
+    local player = NDCore.Functions.GetPlayer(src) -- Replace with your actual function to get player data
     if player and player.job then
         for _, jobIdentifier in ipairs(Config.jobIdentifiers) do
             if player.job == jobIdentifier then
