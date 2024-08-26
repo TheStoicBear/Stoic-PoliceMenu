@@ -5,7 +5,7 @@ function SendCitationHandler(playerId, title, message, cost)
         title = title,
         description = message,
         duration = 5000,  -- Default duration is 5000 milliseconds (5 seconds)
-        position = 'bottom', --Middle center-bottom
+        position = 'bottom', -- Middle center-bottom
         type = 'inform',
         style = {},  -- You can customize the style if needed
         icon = 'fas fa-info-circle',  -- Use Font Awesome 6 icon name for inform type
@@ -19,32 +19,80 @@ end
 
 -- Function to deduct fines and send a message to the target player
 function DeductFine(targetPlayerId, amount, reason)
-    local player = NDCore.getPlayer(targetPlayerId)
+    local accountInfo = exports['money']:getaccount(targetPlayerId)
 
-    -- Check if the player object is valid before proceeding
-    if player then
-        player.deductMoney("bank", amount, "Player Citations")
-        local message = ' You have been fined: $' .. amount .. ' for: ' .. reason
-        SendCitationHandler(targetPlayerId, "Fine:", message, amount)
+    -- Check if the account information is valid before proceeding
+    if accountInfo then
+        local newBankBalance = (accountInfo.bank or 0) - amount
+        if newBankBalance < 0 then
+            newBankBalance = 0  -- Prevent negative bank balance
+        end
+        local updatedAccount = {
+            cash = accountInfo.cash or 0,
+            bank = newBankBalance
+        }
+        local success = exports['money']:updateaccount(targetPlayerId, updatedAccount)
+        if success then
+            local message = ' You have been fined: $' .. amount .. ' for: ' .. reason
+            SendCitationHandler(targetPlayerId, "Fine:", message, amount)
+        else
+            print("Failed to deduct fine for targetPlayerId:", targetPlayerId)
+        end
     else
-        print("Invalid player object for targetPlayerId:", targetPlayerId)
+        print("Invalid account information for targetPlayerId:", targetPlayerId)
     end
 end
 
 -- Function to issue a ticket and send a message to the target player
 function IssueTicket(targetPlayerId, amount, reason)
-    local player = NDCore.getPlayer(targetPlayerId)
-    player.deductMoney("bank", amount, "Player Citations")
-    local message = ' You have been issued a ticket: $' .. amount .. ' for: ' .. reason
-    SendCitationHandler(targetPlayerId, "Ticket:", message, amount)
+    local accountInfo = exports['money']:getaccount(targetPlayerId)
+
+    -- Check if the account information is valid before proceeding
+    if accountInfo then
+        local newBankBalance = (accountInfo.bank or 0) - amount
+        if newBankBalance < 0 then
+            newBankBalance = 0  -- Prevent negative bank balance
+        end
+        local updatedAccount = {
+            cash = accountInfo.cash or 0,
+            bank = newBankBalance
+        }
+        local success = exports['money']:updateaccount(targetPlayerId, updatedAccount)
+        if success then
+            local message = ' You have been issued a ticket: $' .. amount .. ' for: ' .. reason
+            SendCitationHandler(targetPlayerId, "Ticket:", message, amount)
+        else
+            print("Failed to issue ticket for targetPlayerId:", targetPlayerId)
+        end
+    else
+        print("Invalid account information for targetPlayerId:", targetPlayerId)
+    end
 end
 
 -- Function to issue a parking citation and send a message to the target player
 function IssueParkingCitation(targetPlayerId, amount, reason)
-    local player = NDCore.getPlayer(targetPlayerId)
-    player.deductMoney("bank", amount, "Player Citations")
-    local message = ' You have been issued a parking citation: $' .. amount .. ' for: ' .. reason
-    SendCitationHandler(targetPlayerId, "Parking Citation:", message, amount)
+    local accountInfo = exports['money']:getaccount(targetPlayerId)
+
+    -- Check if the account information is valid before proceeding
+    if accountInfo then
+        local newBankBalance = (accountInfo.bank or 0) - amount
+        if newBankBalance < 0 then
+            newBankBalance = 0  -- Prevent negative bank balance
+        end
+        local updatedAccount = {
+            cash = accountInfo.cash or 0,
+            bank = newBankBalance
+        }
+        local success = exports['money']:updateaccount(targetPlayerId, updatedAccount)
+        if success then
+            local message = ' You have been issued a parking citation: $' .. amount .. ' for: ' .. reason
+            SendCitationHandler(targetPlayerId, "Parking Citation:", message, amount)
+        else
+            print("Failed to issue parking citation for targetPlayerId:", targetPlayerId)
+        end
+    else
+        print("Invalid account information for targetPlayerId:", targetPlayerId)
+    end
 end
 
 -- Function to impound a vehicle and send a message to the target player
