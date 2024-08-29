@@ -1,4 +1,4 @@
-local Framework = exports["framework"]:getClientFunctions()    
+local Framework = exports["framework"]:getClientFunctions()
 local ox_target = exports.ox_target
 local isOnDuty = false -- Initially not on duty
 
@@ -29,54 +29,40 @@ local actionMenuOptions = {
 
 RegisterKeyMapping('DisplayPoliceMenu', 'Open Police Menu', 'keyboard', 'F7')
 
--- Improved IsPoliceJob function that logs the outcome and errors
+-- Check if the player has police permissions
 function IsPoliceJob(player)
-    if player and player.job then
-        for _, jobIdentifier in ipairs(Config.jobIdentifiers) do
-            if player.job == jobIdentifier then
-                return true
-            end
-        end
-    else
-        print("Player job not available or player data not fetched properly.")
-    end
-    return false
+    return player and player.leoPerms
 end
 
 -- Function to ensure the player is in a police job and update the menu accordingly
-function UpdatePoliceJobState()
-    local player = Framework.getPlayer(Framework.serverId)
-    print(json.encode(player)) -- This will print all of the user's data
-
-    if player then
-        local isPolice = IsPoliceJob(player)
-        if ox_target then
-            if isPolice then
-                ox_target:addGlobalPlayer(actionMenuOptions)
-            else
-                ox_target:removeGlobalPlayer(actionMenuOptions)
-            end
+function UpdatePoliceJobState(player)
+    local isPolice = IsPoliceJob(player)
+    if ox_target then
+        if isPolice then
+            ox_target:addGlobalPlayer(actionMenuOptions)
         else
-            print("ox_target not available.")
+            ox_target:removeGlobalPlayer(actionMenuOptions)
         end
+    else
+        print("ox_target not available.")
     end
 end
 
 -- Events to handle player data loading and updates
-AddEventHandler("ND:characterLoaded", function(character)
+AddEventHandler("Framework:characterLoaded", function(character)
     print("Character loaded:", character.firstname, character.lastname)
-    UpdatePoliceJobState()
+    UpdatePoliceJobState(character)
 end)
 
-AddEventHandler("ND:updateCharacter", function(character)
+AddEventHandler("Framework:updateCharacter", function(character)
     print("Character updated:", character.firstname, character.lastname)
-    UpdatePoliceJobState()
+    UpdatePoliceJobState(character)
 end)
 
 -- Command to open the police menu
 RegisterCommand('policeMenu', function()
-    local player = Framework.getPlayer(Framework.serverId)
-    if player and IsPoliceJob(player) then
+    local player = Framework.getPlayer(source)
+    if IsPoliceJob(player) then
         DisplayPoliceMenu()
     else
         print("You do not have permission to access the police menu.")
