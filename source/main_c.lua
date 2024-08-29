@@ -1,3 +1,4 @@
+local Framework = exports[Config.FrameworkName].getServerFunctions()
 local ox_target = exports.ox_target
 local isOnDuty = false -- Initially not on duty
 
@@ -29,11 +30,12 @@ local actionMenuOptions = {
 RegisterKeyMapping('DisplayPoliceMenu', 'Open Police Menu', 'keyboard', 'F7')
 
 -- Improved IsPoliceJob function that logs the outcome and errors
-function IsPoliceJob(player)
-    local player = NDCore.getPlayer(source) -- Fetch player data
-    if player and player.job then
+function IsPoliceJob(playerId)
+    local player = Framework.getPlayer(playerId) -- Fetch player data
+    if player and player.getData("job") then
+        local playerJob = player.getData("job")
         for _, jobIdentifier in ipairs(Config.jobIdentifiers) do
-            if player.job == jobIdentifier then
+            if playerJob == jobIdentifier then
                 return true
             end
         end
@@ -44,8 +46,8 @@ function IsPoliceJob(player)
 end
 
 -- Function to ensure the player is in a police job and update the menu accordingly
-function UpdatePoliceJobState(player)
-    local isPolice = IsPoliceJob(player)
+function UpdatePoliceJobState(playerId)
+    local isPolice = IsPoliceJob(playerId)
     if ox_target then
         if isPolice then
             ox_target:addGlobalPlayer(actionMenuOptions)
@@ -60,18 +62,18 @@ end
 -- Events to handle player data loading and updates
 AddEventHandler("ND:characterLoaded", function(character)
     print("Character loaded:", character.firstname, character.lastname)
-    UpdatePoliceJobState(character)
+    UpdatePoliceJobState(character.source)
 end)
 
 AddEventHandler("ND:updateCharacter", function(character)
     print("Character updated:", character.firstname, character.lastname)
-    UpdatePoliceJobState(character)
+    UpdatePoliceJobState(character.source)
 end)
 
 -- Command to open the police menu
-RegisterCommand('policeMenu', function()
-    local player = NDCore.getPlayer(source)
-    if player and IsPoliceJob(player) then
+RegisterCommand('policeMenu', function(source)
+    local player = Framework.getPlayer(source)
+    if player and IsPoliceJob(source) then
         DisplayPoliceMenu()
     else
         print("You do not have permission to access the police menu.")
