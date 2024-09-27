@@ -1,5 +1,6 @@
 local ox_target = exports.ox_target
 local isOnDuty = false -- Initially not on duty
+local NDCore = exports["ND_Core"]
 
 -- Police Menu Configuration
 local config = {
@@ -102,27 +103,40 @@ end
 
 RegisterNetEvent('stoicpm:shotspotter')
 AddEventHandler('stoicpm:shotspotter', function(location, streetName)
-    local notificationData = {
-        id = 'shotspotter_notification',
-        title = Config.notification.titlePrefix,
-        description = 'Shots fired on ' .. streetName,
-        position = Config.notification.position,
-        style = {
-            backgroundColor = Config.notification.backgroundColor,
-            color = Config.notification.textColor,
-            ['.description'] = {
-                color = Config.notification.descriptionColor
-            }
-        },
-        icon = Config.notification.icon,
-        iconColor = Config.notification.iconColor
-    }
-    lib.notify(notificationData)
+    local xPlayer = NDCore.getPlayer()
+    local job = xPlayer.job
+    if xPlayer and job then
+        for _, jobIdentifier in ipairs(Config.jobIdentifiers) do
+            if job == jobIdentifier then
+                -- Only notify if the job matches
+                local notificationData = {
+                    id = 'shotspotter_notification',
+                    title = Config.notification.titlePrefix,
+                    description = 'Shots fired on ' .. streetName,
+                    position = Config.notification.position,
+                    style = {
+                        backgroundColor = Config.notification.backgroundColor,
+                        color = Config.notification.textColor,
+                        ['.description'] = {
+                            color = Config.notification.descriptionColor
+                        }
+                    },
+                    icon = Config.notification.icon,
+                    iconColor = Config.notification.iconColor
+                }
+                lib.notify(notificationData)
 
-    PlaySoundFrontend(-1, "QUIT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
+                PlaySoundFrontend(-1, "QUIT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true)
 
-    CreateShotSpotterBlip(location)
+                CreateShotSpotterBlip(location)
+
+                -- Break out of the loop once the job is found
+                break
+            end
+        end
+    end
 end)
+
 
 function CreateShotSpotterBlip(location)
     local blip = AddBlipForCoord(location)
