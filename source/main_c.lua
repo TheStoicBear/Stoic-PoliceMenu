@@ -1,6 +1,5 @@
 local ox_target = exports.ox_target
 local isOnDuty = false -- Initially not on duty
-local NDCore = exports["ND_Core"]
 
 -- Police Menu Configuration
 local config = {
