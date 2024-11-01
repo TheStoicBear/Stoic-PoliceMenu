@@ -32,8 +32,6 @@ local actionMenuOptions = {
     } 
 }
 
-RegisterKeyMapping('DisplayPoliceMenu', 'Open Police Menu', 'keyboard', 'F7')
-
 -- Function to check if the player has a police job 
 function IsPoliceJob(player) 
     local player = NDCore.getPlayer(source) -- Fetch player data 
@@ -50,6 +48,19 @@ end
 -- Add the target menu for all players globally 
 CreateThread(function() 
     ox_target:addGlobalPlayer(actionMenuOptions)
+
+    -- Continuously check for the key press
+    while true do
+        Wait(0) -- Wait for a frame
+        if IsControlJustReleased(0, 168) then -- 168 corresponds to F7
+            local player = NDCore.getPlayer(source)
+            if player and IsPoliceJob(player) then 
+                DisplayPoliceMenu() 
+            else 
+                print("You do not have permission to access the police menu.") 
+            end 
+        end
+    end
 end)
 
 -- Event when character is loaded
