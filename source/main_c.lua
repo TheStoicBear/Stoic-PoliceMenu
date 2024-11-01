@@ -1,6 +1,6 @@
-local ox_target = exports.ox_target 
-local isOnDuty = false -- Initially not on duty 
- 
+local ox_target = exports.ox_target  
+local isOnDuty = false -- Initially not on duty
+
 -- Police Menu Configuration 
 local config = { 
     toggle_duty = true, 
@@ -8,8 +8,8 @@ local config = {
     search_player = true, 
     citations_menu = true, 
     jail_player = true 
-} 
- 
+}
+
 -- Define options for opening the action menu 
 local actionMenuOptions = { 
     { 
@@ -19,16 +19,22 @@ local actionMenuOptions = {
         iconColor = Config.ThirdEyeIconColor, 
         distance = Config.ThirdEyeDistance, 
         onSelect = function(data) 
-            local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(data.entity)) 
-            TriggerEvent("openActionMenu", target) 
-            lib.showContext('policeactions') 
+            local target = GetPlayerServerId(NetworkGetPlayerIndexFromPed(data.entity))
+            local player = NDCore.getPlayer(source)
+
+            if IsPoliceJob(player) then
+                TriggerEvent("openActionMenu", target)
+                lib.showContext('policeactions')
+            else
+                print("You do not have permission to access the police menu.")
+            end
         end 
     } 
-} 
- 
-RegisterKeyMapping('DisplayPoliceMenu', 'Open Police Menu', 'keyboard', 'F7') 
- 
--- Improved IsPoliceJob function that logs the outcome and errors 
+}
+
+RegisterKeyMapping('DisplayPoliceMenu', 'Open Police Menu', 'keyboard', 'F7')
+
+-- Function to check if the player has a police job 
 function IsPoliceJob(player) 
     local player = NDCore.getPlayer(source) -- Fetch player data 
     if player and player.job then 
@@ -37,44 +43,30 @@ function IsPoliceJob(player)
                 return true 
             end 
         end 
-    else 
-        print("Player job not available or player data not fetched properly.") 
-    end 
+    end
     return false 
-end 
- 
--- Function to ensure the player is in a police job and update the menu accordingly 
-function UpdatePoliceJobState(player) 
-    local isPolice = IsPoliceJob(player) 
-    if ox_target then 
-        if isPolice then 
-            ox_target:addGlobalPlayer(actionMenuOptions) -- Add global target for police job
-        else 
-            ox_target:removeGlobalPlayer(actionMenuOptions) -- Remove target if not in police job
-        end 
-    else 
-        print("ox_target not available.") 
-    end 
-end 
- 
--- Event when character is loaded 
+end
+
+-- Add the target menu for all players globally 
+CreateThread(function() 
+    ox_target:addGlobalPlayer(actionMenuOptions)
+end)
+
+-- Event when character is loaded
 AddEventHandler("ND:characterLoaded", function(character) 
     print("Character loaded:", character.firstname, character.lastname) 
-    UpdatePoliceJobState(character) 
-end) 
- 
+end)
+
 -- Event when character is updated 
 AddEventHandler("ND:updateCharacter", function(character) 
     print("Character updated:", character.firstname, character.lastname) 
-    UpdatePoliceJobState(character) 
-end) 
+end)
 
--- Event when character is unloaded (e.g., when switching characters)
+-- Event when character is unloaded 
 AddEventHandler("ND:characterUnloaded", function(character) 
     print("Character unloaded:", character.firstname, character.lastname) 
-    UpdatePoliceJobState(character)  -- Update or remove the menu if needed
-end) 
- 
+end)
+
 -- Command to open the police menu 
 RegisterCommand('policeMenu', function() 
     local player = NDCore.getPlayer(source) 
@@ -83,8 +75,8 @@ RegisterCommand('policeMenu', function()
     else 
         print("You do not have permission to access the police menu.") 
     end 
-end, false) 
- 
+end, false)
+
 function DisplayPoliceMenu() 
     local policeMenu = { 
         id = 'police_menu', 
@@ -105,93 +97,4 @@ function DisplayPoliceMenu()
     } 
     lib.registerContext(policeMenu) 
     lib.showContext('police_menu') 
-end 
- 
-RegisterNetEvent('stoicpm:shotspotter') 
-AddEventHandler('stoicpm:shotspotter', function(location, streetName) 
-    local xPlayer = NDCore.getPlayer() 
-    local job = xPlayer.job 
-    if xPlayer and job then 
-        for _, jobIdentifier in ipairs(Config.jobIdentifiers) do 
-            if job == jobIdentifier then 
-                -- Only notify if the job matches 
-                local notificationData = { 
-                    id = 'shotspotter_notification', 
-                    title = Config.notification.titlePrefix, 
-                    description = 'Shots fired on ' .. streetName, 
-                    position = Config.notification.position, 
-                    style = { 
-                        backgroundColor = Config.notification.backgroundColor, 
-                        color = Config.notification.textColor, 
-                        ['.description'] = { 
-                            color = Config.notification.descriptionColor 
-                        } 
-                    }, 
-                    icon = Config.notification.icon, 
-                    iconColor = Config.notification.iconColor 
-                } 
-                lib.notify(notificationData) 
- 
-                PlaySoundFrontend(-1, "QUIT", "HUD_FRONTEND_DEFAULT_SOUNDSET", true) 
- 
-                CreateShotSpotterBlip(location) 
- 
-                -- Break out of the loop once the job is found 
-                break 
-            end 
-        end 
-    end 
-end) 
- 
- 
-function CreateShotSpotterBlip(location) 
-    local blip = AddBlipForCoord(location) 
-    SetBlipSprite(blip, Config.shotspotter.blipSprite) 
-    SetBlipScale(blip, Config.shotspotter.blipScale) 
-    SetBlipColour(blip, Config.shotspotter.blipColour) 
-    BeginTextCommandSetBlipName("STRING") 
-    AddTextComponentString(Config.shotspotter.blipName) 
-    EndTextCommandSetBlipName(blip) 
-    PulseBlip(blip) 
-    Citizen.Wait(Config.shotspotter.pulseTime) 
-    RemoveBlip(blip) 
-end 
- 
-CreateThread(function() 
-    while true do 
-        Wait(0) 
-        local playerPed = PlayerPedId() 
-        if IsPedArmed(playerPed, 4) and ShouldAlert(playerPed) then 
-            local playerPos = GetEntityCoords(playerPed) 
-            if IsPedShooting(playerPed) then 
-                TriggerServerEvent("stoicpm:shotspotter", playerPos, GetStreetNameFromHashKey(GetStreetNameAtCoord(playerPos.x, playerPos.y, playerPos.z))) 
-                Wait(30000) 
-            else 
-                Wait(500) 
-            end 
-        else 
-            Wait(500) 
-        end 
-    end 
-end) 
- 
-function ShouldAlert(playerPed) 
-    local currentWeapon = GetSelectedPedWeapon(playerPed) 
-    if Config.IgnoreWeapons[currentWeapon] then 
-        return false 
-    end 
-    return not IsPedCurrentWeaponSilenced(playerPed) 
-end 
- 
-function GetNearestPlayer() 
-    local myPos = GetEntityCoords(GetPlayerPed(-1)) 
-    local nearestPlayer, nearestDistance = nil, math.huge 
-    for _, player in ipairs(GetActivePlayers()) do 
-        local targetPos = GetEntityCoords(GetPlayerPed(player)) 
-        local distance = GetDistanceBetweenCoords(myPos.x, myPos.y, myPos.z, targetPos.x, targetPos.y, targetPos.z, true) 
-        if distance < nearestDistance then 
-            nearestPlayer, nearestDistance = player, distance 
-        end 
-    end 
-    return nearestPlayer 
 end
